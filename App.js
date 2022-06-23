@@ -13,9 +13,6 @@ export default function App() {
       <MyComponent text="Overriding 1st message from MyComponent class!" color="blue"  size={32}/>
       <MyComponent text="Overriding 2nd message from MyComponent class!" color="green" size={16}/>
       <MyButton />
-
- 
-
     </View>
   );
 }

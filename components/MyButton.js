@@ -20,8 +20,6 @@ export function MyButton( props ) {
     //   setChance(5)
     // }
 
-    // cont
-
 const styles =  StyleSheet.create ({
   button: {
     backgroundColor: "black",
@@ -40,5 +38,3 @@ const styles =  StyleSheet.create ({
     // width: 200,
     // backgroundColor: 'yellow',
 })
-
-

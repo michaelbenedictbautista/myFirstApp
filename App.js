@@ -6,21 +6,21 @@ import { useState } from 'react'
 import constants from 'expo-constants'
 import { ListItem } from './components/ListItem'
 import { TouchableOpacity } from 'react-native'
+import { ListSeparator } from './components/ListSeparator';
 
 
 export default function App() {
   //const[ click, setClick ] = useState(0)
 
-  const LIST = [
-    { id: '1', name: 'Banana', status: false},
-    { id: '2', name: 'Pineapple', status: false},
-    { id: '3', name: 'Eggplant', status: false},
-    { id: '4', name: 'Durian', status: false},
-  ]
+  // const LIST = [
+  //   { id: '1', name: 'Banana', status: false},
+  //   { id: '2', name: 'Pineapple', status: false},
+  //   { id: '3', name: 'Eggplant', status: false},
+  //   { id: '4', name: 'Durian', status: false},
+  // ]
 
   // Application state
-  const [ListData, setListData] = useState(LIST)
-
+  const [ListData, setListData] = useState([])
   const [input, setInput] = useState('')
 
   // Function to add input value to the ListData (adding item to our list) 
@@ -38,7 +38,6 @@ export default function App() {
     // <View style={ [styles.listItem, styles.listBackground] }>
     //   <Text style={styles.listText}> {item.name} </Text>   
     // </View>
-
     <ListItem item = {item} />
   )
   
@@ -66,6 +65,7 @@ export default function App() {
         data={ListData}
         keyExtractor={ (item)  => item.id }
         renderItem =  {renderItem}
+        ItemSeparatorComponent={ ListSeparator }
       />
     </View>
   );
@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: '#14913a',
-    pading: 5,
+    backgroundColor: 'green',
+    padding: 5,
   },
 
   buttonText: {
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 
   buttonTextDisabled: {
     backgroundColor: '#ccc',
-  }
+  },
   
 });
 

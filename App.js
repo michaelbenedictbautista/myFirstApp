@@ -2,14 +2,41 @@ import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, FlatList, TextInput } from 'react-native'
 // import { MyComponent } from './components/MyComponent'
 // import { MyButton } from './components/MyButton'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import constants from 'expo-constants'
 import { ListItem } from './components/ListItem'
 import { TouchableOpacity } from 'react-native'
-import { ListSeparator } from './components/ListSeparator';
+import { ListSeparator } from './components/ListSeparator'
+import { ListEmpty } from './components/ListEmpty'
+import { ListFooter } from './components/ListFooter'
+import Storage from 'react-native-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 
 
 export default function App() {
+
+  // Local storage
+const storage = new Storage({
+  // maximum capacity, default 1000 key-ids
+  size: 1000,
+
+  // Use AsyncStorage for RN apps, or window.localStorage for web apps.
+  // If storageBackend is not set, data will be lost after reload.
+  storageBackend: AsyncStorage, // for web: window.localStorage
+
+  // expire time, default: 1 day (1000 * 3600 * 24 milliseconds).
+  // can be null, which means never expire.
+  defaultExpires: null,
+
+  // cache data in the memory. default is true.
+  enableCache: true,
+
+});
+
+
+
+
   //const[ click, setClick ] = useState(0)
 
   // const LIST = [
@@ -22,6 +49,70 @@ export default function App() {
   // Application state
   const [ListData, setListData] = useState([])
   const [input, setInput] = useState('')
+  const [ starting, setStarting ] = useState ( true)
+
+
+
+
+  //reference text input 
+const txtInput = useRef()
+
+// storage functios
+const saveData = () => {
+  storage.save({
+    key: 'localListData', // Note: Do not use underscore("_") in key!
+    data: JSON.stringify(ListData)
+  });  
+}
+
+const loadData = () => {
+storage
+.load({
+  key: 'localListData',
+})
+  .then((data) => {
+    setListData(JSON.parse(data))
+  })
+}
+
+
+
+const sortList = (arr) => {
+   let newSortedList = arr.sort (( item1, item2) => {
+    return item2.id - item1.id
+  })
+  setListData(newSortedList)
+}
+
+//useEffect Hook only when there are changes made 
+useEffect( () => {
+  sortList(ListData)
+  saveData()
+  }, 
+  [ ListData] )
+
+
+useEffect (() => {
+  if (starting) {
+    loadData()
+    setStarting (false)
+  }
+})
+
+
+const updateStatus = (itemId) => {
+ let newList = ListData.map ( (item) => {
+  if (item.id === itemID) {
+    return { id: item.id, name: item.name, status: true}
+  }
+    else {
+      return item
+    }
+ })
+  setListData (newList)
+}
+
+
 
   // Function to add input value to the ListData (adding item to our list) 
   const addItem = () => {
@@ -31,16 +122,37 @@ export default function App() {
     let newItem = {id: newId, name: input, status: false}
     let newList = ListData.concat( newItem )
     setListData(newList)
+    txtInput.current.clear()
   }
 
+
   // Function to render list item
-  const renderItem = ({item}) => (
-    // <View style={ [styles.listItem, styles.listBackground] }>
-    //   <Text style={styles.listText}> {item.name} </Text>   
-    // </View>
-    <ListItem item = {item} />
-  )
+  // const renderItem = ({item}) => (
+  //   // <View style={ [styles.listItem, styles.listBackground] }>
+  //   //   <Text style={styles.listText}> {item.name} </Text>   
+  //   // </View>
+  //   <ListItem item = {item} />
+  // )
   
+// Function to delete input value to the ListData (deleting item to our list) 
+const deleteItem = ( itemId ) => {
+  // find the item id
+  // remove item with the id from array (ListData)
+  const newList = ListData.filter( (item) => {
+    if( item.id !== itemId ) {
+      return item
+    }
+  })
+  // setListData( new array )
+  SetListData( newList )
+}
+//function to render list item
+const renderItem = ({item}) => (
+ <ListItem item={item} remove={ deleteItem } update= {updateStatus} />
+)
+
+
+
   return (
     <View style={styles.container}>
       {/* <Text>Welcome Mike to your first app!</Text>
@@ -51,14 +163,30 @@ export default function App() {
       <MyButton /> */}
 
       <View style = {styles.header}>
-        <TextInput  style = {styles.input} onChangeText={ (value) => setInput(value) }/>
+        <TextInput  style = {styles.input} 
+          onChangeText={ (value) => setInput(value) }
+          ref = {txtInput}
+        />
+
         <TouchableOpacity 
           style={ (input.length < 3) ? styles.buttonDisabled : styles.button}
           onPress={ () => addItem()} 
-          disabled = { (input.length < 3) ? true : false }>
-    
+          disabled = { (input.length < 3) ? true : false }
+        >
+
           <Text style= {(input.length < 3) ? styles.buttonTextDisabled : styles.button}> Add </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={ (input.length < 3) ? styles.buttonDisabled : styles.button}
+          onPress={ () => deleteItem()} 
+          disabled = { (input.length < 3) ? true : false }
+        >
+
+          <Text style= {(input.length < 3) ? styles.buttonTextDisabled : styles.button}> delete </Text>
+        </TouchableOpacity>
+
+
       </View>
         
       <FlatList 
@@ -66,6 +194,9 @@ export default function App() {
         keyExtractor={ (item)  => item.id }
         renderItem =  {renderItem}
         ItemSeparatorComponent={ ListSeparator }
+        ListEmptyComponent= { ListEmpty } // For no items in the list
+        ListFooterComponent={ <ListFooter text="End of List" />}
+
       />
     </View>
   );
@@ -104,6 +235,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 10,
   },
 
   button: {

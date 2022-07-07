@@ -76,7 +76,7 @@ storage
 }
 
 
-
+//Sort recently added item on top of the list
 const sortList = (arr) => {
    let newSortedList = arr.sort (( item1, item2) => {
     return item2.id - item1.id
@@ -100,7 +100,7 @@ useEffect (() => {
 })
 
 
-const updateStatus = (itemId) => {
+const updateStatus = (itemID) => {
  let newList = ListData.map ( (item) => {
   if (item.id === itemID) {
     return { id: item.id, name: item.name, status: true}
@@ -144,7 +144,7 @@ const deleteItem = ( itemId ) => {
     }
   })
   // setListData( new array )
-  SetListData( newList )
+  setListData( newList )
 }
 //function to render list item
 const renderItem = ({item}) => (
@@ -175,15 +175,6 @@ const renderItem = ({item}) => (
         >
 
           <Text style= {(input.length < 3) ? styles.buttonTextDisabled : styles.button}> Add </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={ (input.length < 3) ? styles.buttonDisabled : styles.button}
-          onPress={ () => deleteItem()} 
-          disabled = { (input.length < 3) ? true : false }
-        >
-
-          <Text style= {(input.length < 3) ? styles.buttonTextDisabled : styles.button}> delete </Text>
         </TouchableOpacity>
 
 

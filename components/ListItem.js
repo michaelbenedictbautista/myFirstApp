@@ -2,11 +2,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 export function ListItem ( props ) {
     return (
-        <View style={ styles.item }>
+    <View style={ styles.item }>
+      
+      <Text style={ styles.itemText}>{ props.item.name }</Text>
+      
       <TouchableOpacity onPress={ () => props.remove(props.item.id) }>
         <Text style = { (props.item.status) ? styles.itemTextDone : styles.itemText}>Delete</Text>
       </TouchableOpacity>
-      <Text style={ styles.itemText}>{ props.item.name }</Text>
     </View>
 
     )

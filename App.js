@@ -14,10 +14,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 
+
 export default function App() {
 
   // Local storage
-const storage = new Storage({
+  const storage = new Storage({
   // maximum capacity, default 1000 key-ids
   size: 1000,
 
@@ -32,7 +33,7 @@ const storage = new Storage({
   // cache data in the memory. default is true.
   enableCache: true,
 
-});
+  });
 
 
 
@@ -55,52 +56,52 @@ const storage = new Storage({
 
 
   //reference text input 
-const txtInput = useRef()
+  const txtInput = useRef()
 
-// storage functios
-const saveData = () => {
-  storage.save({
-    key: 'localListData', // Note: Do not use underscore("_") in key!
-    data: JSON.stringify(ListData)
-  });  
-}
-
-const loadData = () => {
-storage
-.load({
-  key: 'localListData',
-})
-  .then((data) => {
-    setListData(JSON.parse(data))
-  })
-}
-
-
-//Sort recently added item on top of the list
-const sortList = (arr) => {
-   let newSortedList = arr.sort (( item1, item2) => {
-    return item2.id - item1.id
-  })
-  setListData(newSortedList)
-}
-
-//useEffect Hook only when there are changes made 
-useEffect( () => {
-  sortList(ListData)
-  saveData()
-  }, 
-  [ ListData] )
-
-
-useEffect (() => {
-  if (starting) {
-    loadData()
-    setStarting (false)
+  // storage functios
+  const saveData = () => {
+    storage.save({
+      key: 'localListData', // Note: Do not use underscore("_") in key!
+      data: JSON.stringify(ListData)
+    });  
   }
-})
+
+  const loadData = () => {
+  storage
+  .load({
+    key: 'localListData',
+  })
+    .then((data) => {
+      setListData(JSON.parse(data))
+    })
+  }
 
 
-const updateStatus = (itemID) => {
+  //Sort recently added item on top of the list
+  const sortList = (arr) => {
+    let newSortedList = arr.sort (( item1, item2) => {
+      return item2.id - item1.id
+    })
+    setListData(newSortedList)
+  }
+
+  //useEffect Hook only when there are changes made 
+  useEffect( () => {
+    sortList(ListData)
+    saveData()
+    }, 
+    [ ListData] )
+
+
+  useEffect (() => {
+    if (starting) {
+      loadData()
+      setStarting (false)
+    }
+  })
+
+
+  const updateStatus = (itemID) => {
  let newList = ListData.map ( (item) => {
   if (item.id === itemID) {
     return { id: item.id, name: item.name, status: true}
@@ -108,9 +109,9 @@ const updateStatus = (itemID) => {
     else {
       return item
     }
- })
-  setListData (newList)
-}
+  })
+    setListData (newList)
+  }
 
 
 
@@ -125,6 +126,19 @@ const updateStatus = (itemID) => {
     txtInput.current.clear()
   }
 
+  // const getCurrentDate=()=>{
+
+  //   var date = new Date().getDate();
+  //   var month = new Date().getMonth() + 1;
+  //   var year = new Date().getFullYear();
+
+  //   //Alert.alert(date + '-' + month + '-' + year);
+  //   // You can turn it in to your desired format
+  //   return date + '-' + month + '-' + year;//format: dd-mm-yyyy;
+  // }
+
+
+
 
   // Function to render list item
   // const renderItem = ({item}) => (
@@ -134,24 +148,22 @@ const updateStatus = (itemID) => {
   //   <ListItem item = {item} />
   // )
   
-// Function to delete input value to the ListData (deleting item to our list) 
-const deleteItem = ( itemId ) => {
-  // find the item id
-  // remove item with the id from array (ListData)
-  const newList = ListData.filter( (item) => {
-    if( item.id !== itemId ) {
-      return item
-    }
-  })
-  // setListData( new array )
-  setListData( newList )
-}
-//function to render list item
-const renderItem = ({item}) => (
- <ListItem item={item} remove={ deleteItem } update= {updateStatus} />
-)
-
-
+  // Function to delete input value to the ListData (deleting item to our list) 
+  const deleteItem = ( itemId ) => {
+    // find the item id
+    // remove item with the id from array (ListData)
+    const newList = ListData.filter( (item) => {
+      if( item.id !== itemId ) {
+        return item
+      }
+    })
+    // setListData( new array )
+    setListData( newList )
+  }
+  //function to render list item
+  const renderItem = ({item}) => (
+  <ListItem item={item} remove={ deleteItem } update= {updateStatus} />
+  )
 
   return (
     <View style={styles.container}>
@@ -176,7 +188,6 @@ const renderItem = ({item}) => (
 
           <Text style= {(input.length < 3) ? styles.buttonTextDisabled : styles.button}> Add </Text>
         </TouchableOpacity>
-
 
       </View>
         

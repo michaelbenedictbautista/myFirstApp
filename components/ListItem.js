@@ -1,6 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-//import { Icon } from 'react-native-vector-icons/Icon'
+import { View, useState, Button, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+// import Icon from 'react-native-vector-icons/FontAwesome'
 import Icon from 'react-native-vector-icons/AntDesign'
+
+
 
 export function ListItem ( props ) {
     return (
@@ -11,15 +13,24 @@ export function ListItem ( props ) {
       {/* <View style={ styles.icon}>
       < Icon name="arrowsalt" size={20} color="blue" onPress={ () => props.remove(props.item.id) }/>
       </View> */}
-      
-      
-    
-      
-      <TouchableOpacity style={ styles.touch} onPress={ () => props.remove(props.item.id) }>
-      
-      < Icon name="arrowsalt" size={20} color="blue" onPress={ () => props.remove(props.item.id) }/>
-      
+
+      <TouchableOpacity style={ styles.remove} onPress={ () => props.remove(props.item.id) }>
+        < Icon name="delete" size={20} color="white" onPress={ () => props.remove(props.item.id) }/>
       </TouchableOpacity>
+
+      <TouchableOpacity style={ styles.markDone} disabled={(props.item.status ) ? true: false } onPress={ () => props.update(props.item.id) }>
+        < Icon name="checkcircleo" size={20} color="white" onPress={ () => props.update(props.item.id) }/>
+      </TouchableOpacity>
+
+
+      {/* <TouchableOpacity style={ styles.code} onPress={() => props.generateQrCode(input) } >
+      < Icon name="qrcode" size={20}/>
+      </TouchableOpacity> */}
+
+      <TouchableOpacity style={ styles.code}  >
+        < Icon name="qrcode" size={20}/>
+      </TouchableOpacity>
+
     </View>
 
     )
@@ -32,21 +43,32 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
     },
+
     itemText: {
-      fontSize: 20,
-      
+      fontSize: 20,  
     },
+
     itemTextDone: {
         fontSize: 40,
     },
 
-    touch: {
-      
+    remove: {
       position: 'absolute',
       right: 20,
       justifyContent: 'center',
     },
 
+    markDone: {
+      position: 'absolute',
+      right: 50,
+      justifyContent: 'center',
+    },
+
+    code: {
+      position: 'absolute',
+      right: 80,
+      justifyContent: 'center',
+    },
   })
 
  

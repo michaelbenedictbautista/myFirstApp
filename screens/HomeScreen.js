@@ -15,34 +15,24 @@
 //   },
 // } )
 
-import { StatusBar } from 'expo-status-bar'
+// import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, FlatList, TextInput } from 'react-native'
 import { useState, useEffect, useRef } from 'react'
-import constants from 'expo-constants'
+import { TouchableOpacity } from 'react-native'
+// import constants from 'expo-constants'
+
 import { ListItem } from '../components/ListItem'
-import { TouchableOpacity, Button } from 'react-native'
 import { ListSeparator } from '../components/ListSeparator'
 import { ListEmpty } from '../components/ListEmpty'
-import { ListFooter } from '../components/ListFooter'
+import { ListFooter }  from '../components/ListFooter'
 import Storage from 'react-native-storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import LinearGradient  from 'expo-linear-gradient';
-import QRCode from 'react-native-qrcode-svg';
+import {LinearGradient}  from 'expo-linear-gradient'
+import QRCode from 'react-native-qrcode-svg'
 //import Icon from 'react-native-vector-icons/AntDesign'
 
-// import for navigation
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-// Import firebase config and initializeApp
-import { firebaseConfig } from './config/Config'
-import { initializeApp } from 'firebase/app'
-
-// Initialise firabase app
-initializeApp( firebaseConfig )
-
-
-export default function App() {
+export function HomeScreen ( navigation) {
 
   // Local storage
   const storage = new Storage({
@@ -77,7 +67,7 @@ export default function App() {
   // Application state
   const [ListData, setListData] = useState([])
   const [input, setInput] = useState('')
-  const [ starting, setStarting ] = useState ( true)
+  const [starting, setStarting ] = useState ( true)
   const [qrvalue, setQrvalue] = useState('');
  
   //const [ markedItem, setMarkedItem ] = useState([])
@@ -114,17 +104,6 @@ export default function App() {
     })
     setListData(newSortedList)
   }
-
-
-  // const sortList = (arr) => {
-    
-  //   arr.sort((item1, item2) => {
-  //     return item2.id - item1.id
-  //   } )
-  //   })
-  // }
-
-
 
   //useEffect Hook only when there are changes made 
   useEffect( () => {
@@ -167,27 +146,6 @@ export default function App() {
     txtInput.current.clear()
   }
 
-  // const getCurrentDate=()=>{
-
-  //   var date = new Date().getDate();
-  //   var month = new Date().getMonth() + 1;
-  //   var year = new Date().getFullYear();
-
-  //   //Alert.alert(date + '-' + month + '-' + year);
-  //   // You can turn it in to your desired format
-  //   return date + '-' + month + '-' + year;//format: dd-mm-yyyy;
-  // }
-
-
-
-
-  // Function to render list item
-  // const renderItem = ({item}) => (
-  //   // <View style={ [styles.listItem, styles.listBackground] }>
-  //   //   <Text style={styles.listText}> {item.name} </Text>   
-  //   // </View>
-  //   <ListItem item = {item} />
-  // )
   
   // Function to delete input value to the ListData (deleting item to our list) 
   const deleteItem = ( itemId ) => {
@@ -202,40 +160,34 @@ export default function App() {
     setListData( newList )
   }
 
+
+const generateCode = (itemId) => {
+  let newGeneratedItem = ([])
+  ListData.map ((item) => {
+    if (item.id === itemId) {
+      return newGeneratedItem = { id: item.id, name: item.name, date: item.fullDate, status: true }
+    }
+    else {
+      return item
+    }
+  })
+  setQrvalue(newGeneratedItem.name)
+}
+
+
   
   //function to render list item
   const renderItem = ({item}) => (
-  <ListItem item={item} remove={ deleteItem } update= {updateStatus} />
-  )
-
+  <ListItem item={item} remove={ deleteItem } update= {updateStatus} generateQRCode = {generateCode}/>
+  );
 
 
   return (
 
-    //<View style={[styles.container] [styles.button]} >
+    // <View style={[styles.container] [styles.button]} >
     <View style={styles.container} >
-
-      {/* <Text>Welcome Mike to your first app!</Text>
-      <StatusBar style="auto" />
-      <MyComponent text="Overriding 1st message from MyComponent class!" color="blue"  size={32}/>
-      <MyComponent text="Overriding 2nd message from MyComponent class!" color="green" size={16}/>
-      <MyButton />
-      <MyButton /> */}
-      {/* <View style={styles.container2}>
-        <View style={styles.iconBackground}>
-          <TouchableOpacity>
-            <Image
-
-              style={styles.backImage}
-              
-              source={require("./images/back.png")} />
-          </TouchableOpacity>
-          </View>
-      </View> */}
-
-
-    <View>
-      <Text style={styles.titleStyle}> Generation of QR Code for task </Text>
+      <View>
+        <Text style={styles.titleStyle}> Generation of QR Code for task </Text>
         <QRCode
           //QR code value
           value={qrvalue ? qrvalue : 'NA'}
@@ -259,14 +211,16 @@ export default function App() {
           placeholder="Enter Any Value"
           value={input}
         />
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.buttonStyle}
-          onPress={() => setQrvalue(input)}>
+          // onPress={() => setQrvalue(input)}>
+          onPress={() => generateCode()}>
+
           <Text style={styles.buttonTextStyle}>
             Generate QR Code
           </Text>
-        </TouchableOpacity>
-    </View>  
+        </TouchableOpacity> */}
+      </View>  
 
 
       <View>
@@ -306,31 +260,33 @@ export default function App() {
         keyExtractor={ (item)  => item.id }
         renderItem =  {renderItem}
         
-        // renderItem={({renderItem}) => {
+        // renderItem={({item}) => {
         //   return(
-        //     <Fragment> 
-        //       <Button
-        //         onPress={() => setQrvalue(input)}
-        //         title='Generate'
-        //       >
-        //        < Icon name="qrcode" size={20}/>
-        //       </Button>
-        //     </Fragment
+        //     <ListItem item={item} remove={ deleteItem } update= {updateStatus} />
         //   )}}
 
         ItemSeparatorComponent={ ListSeparator }
         ListEmptyComponent= { ListEmpty } // For no items in the list
         ListFooterComponent={ <ListFooter text="End of List" />}
-
       />
     </View>
 
-  );
+
+    // // ////////////////////sample/////////////////////////
+    // <View style={styles.container}>
+    // <Text>Welcome to Home Screen page</Text>
+    //  <TouchableOpacity onPress={ () => navigation.navigate('Home')}>
+    //     <Text>Go to Sign in</Text>
+    //  </TouchableOpacity>
+    //  </View> 
+
+
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: constants.statusBarHeight,
+    // marginTop: constants.statusBarHeight,
     flex: 1,
     backgroundColor: '#0bcdd4',
     //alignItems: 'center',
@@ -428,16 +384,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  /// = editItems
-  container: {
-    flex: 1,
+  // /// = editItems
+  // container: {
+  //   flex: 1,
    
-  },
-     backImage:{
-      width: 17, 
-      height: 13,
-     resizeMode:'cover'
-    },
-});
+  // },
+  //    backImage:{
+  //     width: 17, 
+  //     height: 13,
+  //    resizeMode:'cover'
+  //   },
+})
+
+
 
 

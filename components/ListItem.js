@@ -23,13 +23,14 @@ export function ListItem ( props ) {
       </TouchableOpacity>
 
 
+      <TouchableOpacity style={ styles.code} onPress={() => props.generateQRCode(props.item.id) } >
+      < Icon name="qrcode" size={20}/>
+      </TouchableOpacity>
+
       {/* <TouchableOpacity style={ styles.code} onPress={() => props.generateQrCode(input) } >
       < Icon name="qrcode" size={20}/>
       </TouchableOpacity> */}
 
-      <TouchableOpacity style={ styles.code}  >
-        < Icon name="qrcode" size={20}/>
-      </TouchableOpacity>
 
     </View>
 

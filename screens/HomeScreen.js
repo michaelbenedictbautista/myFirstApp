@@ -1,30 +1,16 @@
-// import { Text, View, StyleSheet} from 'react-native'
-// export function HomeScreen( props ) {
-//   return (
-//     <View>
-//       <Text>Home Screen</Text>
-//     </View>
-//   )
-// }
-
-// const styles = StyleSheet.create( {
-//   homeView: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// } )
-
 // import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View, FlatList, TextInput } from 'react-native'
 import { useState, useEffect, useRef } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, Share } from 'react-native'
 // import constants from 'expo-constants'
 
+// Components
 import { ListItem } from '../components/ListItem'
 import { ListSeparator } from '../components/ListSeparator'
 import { ListEmpty } from '../components/ListEmpty'
 import { ListFooter }  from '../components/ListFooter'
+
+// External Lib
 import Storage from 'react-native-storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import {LinearGradient}  from 'expo-linear-gradient'
@@ -52,9 +38,6 @@ export function HomeScreen ( navigation) {
 
   });
 
-
-
-
   //const[ click, setClick ] = useState(0)
 
   // const LIST = [
@@ -71,9 +54,6 @@ export function HomeScreen ( navigation) {
   const [qrvalue, setQrvalue] = useState('');
  
   //const [ markedItem, setMarkedItem ] = useState([])
-
-
-
 
   //reference text input 
   const txtInput = useRef()
@@ -175,6 +155,23 @@ const generateCode = (itemId) => {
 }
 
 
+let myQRCode = useRef();
+const shareQRCode = () => {
+  myQRCode.toDataURL((dataURL) => {
+    console.log(dataURL);
+    let shareImageBase64 = {
+      title: 'React Native',
+      url: `data:image/png;base64,${dataURL}`,
+      subject: 'Share Link', //  for email
+    };
+    Share.share(shareImageBase64).catch((error) => console.log(error));
+  });
+};
+
+
+
+
+
   
   //function to render list item
   const renderItem = ({item}) => (
@@ -189,10 +186,13 @@ const generateCode = (itemId) => {
       <View>
         <Text style={styles.titleStyle}> Generation of QR Code for task </Text>
         <QRCode
+
+          getRef={(ref) => (myQRCode = ref)}
+
           //QR code value
           value={qrvalue ? qrvalue : 'NA'}
           //size of QR Code
-          size={250}
+          size={150}
           //Color of the QR Code (Optional)
           color="black"
           //Background Color of the QR Code
@@ -203,14 +203,14 @@ const generateCode = (itemId) => {
         <Text style={styles.textStyle}>
           Please insert any value to generate QR code
         </Text>
-        <TextInput
+        {/* <TextInput
           style={styles.textInputStyle}
           onChangeText={
             (input) => setInput(input)
           }
           placeholder="Enter Any Value"
           value={input}
-        />
+        /> */}
         {/* <TouchableOpacity
           style={styles.buttonStyle}
           // onPress={() => setQrvalue(input)}>
@@ -220,6 +220,15 @@ const generateCode = (itemId) => {
             Generate QR Code
           </Text>
         </TouchableOpacity> */}
+
+
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          onPress={shareQRCode}>
+          <Text style={styles.buttonTextStyle}>
+            Share QR Code
+          </Text>
+        </TouchableOpacity>
       </View>  
 
 
@@ -371,7 +380,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     marginTop: 30,
-    padding: 10,
+    padding: 2,
   },
   buttonTextStyle: {
     color: '#FFFFFF',
